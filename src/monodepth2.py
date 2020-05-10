@@ -1,0 +1,61 @@
+from __future__ import absolute_import, division, print_function
+import sys
+sys.path.append("./monodepth2")
+import os
+import numpy as np
+import PIL.Image as pil
+import matplotlib.pyplot as plt
+import torch
+from torchvision import transforms
+import monodepth2.networks
+from monodepth2.utils import download_model_if_doesnt_exist
+
+class monodepth2():
+    def __init__(self,model_name="mono_1024x320"):
+        self.model_name = model_name
+        download_model_if_doesnt_exist(model_name)
+        encoder_path = os.path.join("./monodepth2/models", model_name, "encoder.pth")
+        depth_decoder_path = os.path.join("./monodepth2/models", model_name, "depth.pth")
+        
+        # LOADING PRETRAINED MODEL
+        self.encoder = networks.ResnetEncoder(18, False)
+        self.depth_decoder = networks.DepthDecoder(num_ch_enc=encoder.num_ch_enc, scales=range(4))
+
+        loaded_dict_enc = torch.load(encoder_path, map_location='cpu')
+        filtered_dict_enc = {k: v for k, v in loaded_dict_enc.items() if k in encoder.state_dict()}
+        self.encoder.load_state_dict(filtered_dict_enc)
+
+        loaded_dict = torch.load(depth_decoder_path, map_location='cpu')
+        self.depth_decoder.load_state_dict(loaded_dict)
+
+        encoder.eval()
+        depth_decoder.eval();
+
+        self.feed_height = load_dict_enc['height']
+        self.feed_width = load_dict_enc['width']
+
+    def image_from_path(self,image_path):
+        input_image = pil.open(image_path).convert('RGB')
+        original_width, original_height = input_image.size
+
+        feed_height = self.feed_height
+        feed_width = self.feed_width
+        input_image_resized = input_image.resize((feed_width, feed_height), pil.LANCZOS)
+        input_image_pytorch = transforms.ToTensor()(input_image_resized).unsqueeze(0)
+
+        return input_image_tensor, (original_width,original_height)
+
+    def inference(self,tensor,size):
+        with torch.no_grad():
+            features = self.encoder(tensor)
+            outputs = depth_decoder(features)
+        disp = outputs[("disp",0)]
+        disp_resized = torch.nn.functional.interpolate(disp,size, mode="bilinear", align_corners=False)
+        return disp_resized
+
+    def inference_from_path(self,image_path):
+        return self.inference(*self.image_from_path)
+
+
+
+
