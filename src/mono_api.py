@@ -10,6 +10,7 @@ from torchvision import transforms
 import monodepth2.networks
 from monodepth2.utils import download_model_if_doesnt_exist
 import cv2
+
 class monodepth2():
     def __init__(self,model_name="mono_1024x320"):
         self.model_name = model_name
