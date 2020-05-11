@@ -13,6 +13,10 @@ def vis(pcd):
 	pcd = [pcd] if type(pcd)!=list else pcd
 	o3d.visualization.draw_geometries(pcd)
 
+def vis_npy(npy):
+	pcd = get_point_cloud(npy)
+	vis(pcd)
+
 def colorize(pcd):
 	pcd = [pcd] if type(pcd)!=list else pcd
 	for p in pcd:

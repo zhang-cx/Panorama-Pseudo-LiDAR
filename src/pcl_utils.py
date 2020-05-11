@@ -41,11 +41,11 @@ def colorize(points,color):
 
 
 
-
-colors = [12000,255*255*255,16000,8190,4330]
-_,points = merge(colors,4.)
-fake = [open3dvis.get_point_cloud(p) for p in points]
-gdt = open3dvis.get_point_cloud(np.load('all.npy'))
-open3dvis.colorize(fake+[gdt])
-open3dvis.vis(fake+[gdt])
+if __name__ == '__main__':
+    colors = [12000,255*255*255,16000,8190,4330]
+    _,points = merge(colors,4.)
+    fake = [open3dvis.get_point_cloud(p) for p in points]
+    gdt = open3dvis.get_point_cloud(np.load('all.npy'))
+    open3dvis.colorize(fake+[gdt])
+    open3dvis.vis(fake+[gdt])
 

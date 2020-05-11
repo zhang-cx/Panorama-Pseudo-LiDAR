@@ -59,4 +59,4 @@ class WaymoDataset():
         images = self.camera_image(frame)
         lidar = self.lidar(frame)
         param = self.calib(frame)
-        return frame,lidar,param
+        return images,lidar,param
