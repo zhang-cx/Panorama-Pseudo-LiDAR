@@ -14,13 +14,13 @@ class PanoramaPL():
 		self.monodepth = mono_api.monodepth2()
 		self.scale_factor = scale_factor
 
-	def load_dataset(self,name):
-		if name == 'waymo':
-			self.dataset = WaymoDataset()
-		elif name == 'custom':
-			self.dataset = CustomDataset()
-		elif name == 'kitti':
-			self.dataset = KittiDataset()
+	def load_dataset(self,path):
+		if self.mode == 'waymo':
+			self.dataset = WaymoDataset(path)
+		elif self.mode == 'custom':
+			self.dataset = CustomDataset(path)
+		elif self.mode == 'kitti':
+			self.dataset = KittiDataset(path)
 		else:
 			raise NotImplementedError
 
@@ -49,12 +49,19 @@ class PanoramaPL():
 
 	def visualize(self,points):
 		ovis.vis_npy(points)
-		
+
 	def detection(self,points):
 		pass
 
 
+	# def run(self,idx):
+	# 	images,lidar,calib = self.dataset.get(idx)
+	# 	self.single_point_cloud(images,)
 
 
 if __name__ == '__main__':
 	PL = PanoramaPL()
+	PL.load_dataset('~/KITTI')
+	images,lidar,calib = PL.dataset.get(idx)
+	sparse_vole = PL.single_point_cloud(images[0],calib)
+	

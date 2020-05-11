@@ -12,11 +12,11 @@ from waymo_open_dataset.utils import  frame_utils
 from waymo_open_dataset import dataset_pb2 as open_dataset
 
 class WaymoDataset():
-    def __init__():
-        pass
-    
-    def load_tfrecord(self,filename,idx):
-        dataset = tf.data.TFRecordDataset(filename, compression_type='')
+    def __init__(self,path):
+        self.filename = path
+
+    def load_tfrecord(self,idx):
+        dataset = tf.data.TFRecordDataset(self.filename, compression_type='')
         frame = None
         for data in dataset:
             frame = open_dataset.Frame()
@@ -54,8 +54,8 @@ class WaymoDataset():
             Es.append(E)
         return Ks,Es
 
-    def get(self,filename,idx):
-        frame = self.load_tfrecord(filename,idx)
+    def get(self,idx):
+        frame = self.load_tfrecord(self.filename,idx)
         images = self.camera_image(frame)
         lidar = self.lidar(frame)
         param = self.calib(frame)

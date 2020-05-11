@@ -4,7 +4,7 @@ import src.kitti_utils as kitti_utils
 import numpy as np 
 import cv2
 class KittiDataset():
-	def __init__(self,path):
+	def __init__(self,path,mode = 'training'):
 		"""
 		KITTI
 		- training
@@ -19,27 +19,28 @@ class KittiDataset():
 		  - velodyne     
 		  - calib 
 		"""
-		self.kitt_path  = path
+		self.kitt_path = path
+		self.mode = mode
 
-	def load_image(self,idx,mode):
+	def load_image(self,idx):
 		"""
 		param: idx(str)
 		param: mode(str): "training" or "testing"
 		"""
-		image_left = cv2.imread(os.path.join(self.kitt_path,mode,'image_2',str(idx)+'.png'))
-		image_right = cv2.imread(os.path.join(self.kitt_path,mode,'image_3',str(idx)+'.png'))
+		image_left = cv2.imread(os.path.join(self.kitt_path,self.mode,'image_2',str(idx)+'.png'))
+		image_right = cv2.imread(os.path.join(self.kitt_path,self.mode,'image_3',str(idx)+'.png'))
 		return [image_left,image_right]
 
-	def calib(self,idx,mode):
-		return kitti_utils.Calibration(os.path.join(self.kitt_path,mode,'calib',str(idx)+'.txt'))
+	def calib(self,idx):
+		return kitti_utils.Calibration(os.path.join(self.kitt_path,self.mode,'calib',str(idx)+'.txt'))
 
-	def lidar(self,idx,mode):
-		velodyne = np.fromfile(os.path.join(self.kitt_path,mode,'velodyne',str(idx)+'.bin'),\
+	def lidar(self,idx):
+		velodyne = np.fromfile(os.path.join(self.kitt_path,self.mode,'velodyne',str(idx)+'.bin'),\
 			 dtype=np.float32, count=-1).reshape([-1,4])
 		return velodyne[:,:3]
 
-	def get(self,idx,mode):
-		images = self.load_image(idx,mode)
-		lidar = self.lidar(idx,mode)
-		calib = self.calib(idx,mode)
+	def get(self,idx):
+		images = self.load_image(idx)
+		lidar = self.lidar(idx)
+		calib = self.calib(idx)
 		return images,lidar,calib
