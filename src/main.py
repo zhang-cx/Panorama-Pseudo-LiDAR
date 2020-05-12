@@ -59,10 +59,17 @@ class PanoramaPL():
 
 
 if __name__ == '__main__':
-	PL = PanoramaPL(mode = 'waymo')
-	PL.load_dataset('/home/ubuntu/waymo/training_0000/segment-10061305430875486848_1080_000_1100_000_with_camera_labels.tfrecord')
-	images,lidar,calib = PL.dataset.get(30)
-	sparse_vole = PL.fusion(images,calib[1],calib[0])
-	np.save('../experiments/data/waymo_test.npy',sparse_vole)
-	np.save('../experiments/data/waymo_lidar.npy',lidar)
-
+	test = 'waymo'
+	if test == 'KITTI':
+		PL = PanoramaPL()
+		PL.load_dataset('/home/ubuntu/KITTI')
+		images,lidar,calib = PL.dataset.get('000004')
+		sparse_vole = PL.single_point_cloud(images[0],calib)
+		np.save('kitti000004.npy',sparse_vole)	
+	if test == 'Waymo':
+		PL = PanoramaPL(mode = 'waymo')
+		PL.load_dataset('/home/ubuntu/waymo/training_0000/segment-10061305430875486848_1080_000_1100_000_with_camera_labels.tfrecord')
+		images,lidar,calib = PL.dataset.get(30)
+		sparse_vole = PL.fusion(images,calib[1],calib[0])
+		np.save('../experiments/data/waymo_test.npy',sparse_vole)
+		np.save('../experiments/data/waymo_lidar.npy',lidar)
