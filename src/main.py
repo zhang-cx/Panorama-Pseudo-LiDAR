@@ -64,4 +64,4 @@ if __name__ == '__main__':
 	PL.load_dataset('/home/ubuntu/KITTI')
 	images,lidar,calib = PL.dataset.get('000000')
 	sparse_vole = PL.single_point_cloud(images[0],calib)
-        np.save('../data/kitti000000.npy',sparse_vole)	
+	np.save('../data/kitti000000.npy',sparse_vole)	
