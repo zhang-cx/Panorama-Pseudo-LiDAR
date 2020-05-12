@@ -32,7 +32,6 @@ def disp_to_rect(disp,scale_factor):
     :param disp: the disparity matrix of the image
     :param scale_factor: the scale factor to recover the depth
     """
-
     H,W = disp.shape
     x,y = np.meshgrid(range(W),range(H))
     y = H - y

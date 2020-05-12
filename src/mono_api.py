@@ -7,7 +7,7 @@ import PIL.Image as pil
 import matplotlib.pyplot as plt
 import torch
 from torchvision import transforms
-import monodepth2.networks
+import monodepth2.networks as networks
 from monodepth2.utils import download_model_if_doesnt_exist
 import cv2
 
@@ -20,20 +20,20 @@ class monodepth2():
         
         # LOADING PRETRAINED MODEL
         self.encoder = networks.ResnetEncoder(18, False)
-        self.depth_decoder = networks.DepthDecoder(num_ch_enc=encoder.num_ch_enc, scales=range(4))
+        self.depth_decoder = networks.DepthDecoder(num_ch_enc=self.encoder.num_ch_enc, scales=range(4))
 
         loaded_dict_enc = torch.load(encoder_path, map_location='cpu')
-        filtered_dict_enc = {k: v for k, v in loaded_dict_enc.items() if k in encoder.state_dict()}
+        filtered_dict_enc = {k: v for k, v in loaded_dict_enc.items() if k in self.encoder.state_dict()}
         self.encoder.load_state_dict(filtered_dict_enc)
 
         loaded_dict = torch.load(depth_decoder_path, map_location='cpu')
         self.depth_decoder.load_state_dict(loaded_dict)
 
-        encoder.eval()
-        depth_decoder.eval();
+        self.encoder.eval()
+        self.depth_decoder.eval();
 
-        self.feed_height = load_dict_enc['height']
-        self.feed_width = load_dict_enc['width']
+        self.feed_height = loaded_dict_enc['height']
+        self.feed_width = loaded_dict_enc['width']
 
     def pil_to_tensor(self,image_path):
         original_width, original_height = input_image.size
@@ -49,12 +49,12 @@ class monodepth2():
         size = input_image.shape
         input_image_resized = cv2.resize(input_image,(feed_width, feed_height))
         input_image_pytorch = transforms.ToTensor()(input_image_resized).unsqueeze(0)
-        return input_image_pytorch,size
+        return input_image_pytorch,size[:2]
 
     def get_disp(self,tensor,size):
         with torch.no_grad():
             features = self.encoder(tensor)
-            outputs = depth_decoder(features)
+            outputs = self.depth_decoder(features)
         disp = outputs[("disp",0)]
         disp_resized = torch.nn.functional.interpolate(disp,size, mode="bilinear", align_corners=False)
         return disp_resized
@@ -66,13 +66,12 @@ class monodepth2():
     def inference_sequence(self,imgs):
         disps = []
         for idx,img in enumerate(imgs):
-            tensor,size = self.np_to_tensor(img)
-            disps.append(self.get_disp(tensor,size))
+            disps.append(self.inference(img))
         return disps
 
     def inference(self,img):
         tensor,size = self.np_to_tensor(img)
-        return self.get_disp(tensor,img)
+        return self.get_disp(tensor,size).squeeze().cpu().numpy()
 
 
 
