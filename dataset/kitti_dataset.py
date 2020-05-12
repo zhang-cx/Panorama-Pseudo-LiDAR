@@ -1,8 +1,9 @@
 import sys
-sys.append('..')
+sys.path.append('..')
 import src.kitti_utils as kitti_utils
 import numpy as np 
 import cv2
+import os
 class KittiDataset():
 	def __init__(self,path,mode = 'training'):
 		"""
