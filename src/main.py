@@ -6,7 +6,7 @@ from dataset.waymo_dataset import *
 from dataset.custom_dataset import *
 from dataset.kitti_dataset import *
 import open3d_utils as ovis
-
+import kitti_utils
 class PanoramaPL():
 	def __init__(self,scale_factor=5.4,mode = 'kitti'):
 		self.mode = mode
@@ -27,8 +27,7 @@ class PanoramaPL():
 	def single_point_cloud(self,image,K):
 		if self.mode == 'kitti':
 			disp = self.monodepth.inference(image)
-			rect = geometry.disp_to_rect(disp,self.scale_factor)
-			vole = K.project_image_to_velo(rect)
+			vole = kitti_utils.project_disp_to_depth(self.scale_factor/disp)
 			sparse_vole = geometry.gen_sparse_points(vole)
 		else:
 			disp = self.monodepth.inference(image)

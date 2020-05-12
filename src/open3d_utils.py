@@ -22,4 +22,7 @@ def colorize(pcd):
 	for p in pcd:
 		p.paint_uniform_color(list(np.random.rand(3)))
 if __name__ == '__main__':
-	vis(get_point_cloud(read_npy('all.npy')))
+	pcds = [get_point_cloud(np.fromfile(str("000068.bin"), dtype=np.float32, count=-1).reshape([-1,4])[:,:3]),\
+		get_point_cloud(read_npy("kitti000068.npy"))]
+	colorize(pcds)
+	vis(pcds)

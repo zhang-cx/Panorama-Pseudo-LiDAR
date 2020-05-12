@@ -7,6 +7,16 @@ from __future__ import print_function
 
 import numpy as np
 
+def project_disp_to_depth(calib, depth, max_high=1.0):
+    rows, cols = depth.shape
+    c, r = np.meshgrid(np.arange(cols), np.arange(rows))
+    points = np.stack([c, r, depth])
+    points = points.reshape((3, -1))
+    points = points.T
+    cloud = calib.project_image_to_velo(points)
+    valid = (cloud[:, 0] >= 0) & (cloud[:, 2] < max_high)
+    return cloud[valid]
+
 
 class Calibration(object):
     ''' Calibration matrices and utils
