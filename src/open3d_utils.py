@@ -22,7 +22,7 @@ def colorize(pcd):
 	for p in pcd:
 		p.paint_uniform_color(list(np.random.rand(3)))
 if __name__ == '__main__':
-	pcds = [get_point_cloud(read_npy('../experiments/data/waymo_lidar.npy')),\
-		get_point_cloud(read_npy("../experiments/data/waymo_test.npy"))]
+	pcds = [get_point_cloud(read_npy("../experiments/Waymo2020-05-12-08-01-36/waymo_lidar.npy")),\
+		get_point_cloud(read_npy("../experiments/Waymo2020-05-12-08-01-36/waymo_test.npy"))]
 	colorize(pcds)
 	vis(pcds)
