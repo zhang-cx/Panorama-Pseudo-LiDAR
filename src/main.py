@@ -67,9 +67,16 @@ if __name__ == '__main__':
 		sparse_vole = PL.single_point_cloud(images[0],calib)
 		np.save('kitti000004.npy',sparse_vole)	
 	if test == 'Waymo':
-		PL = PanoramaPL(mode = 'waymo')
+		timestamp = int(round(time.time()*1000))
+		timestamp = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(timestamp/1000))
+		dir_path = '../experiments/'+test+timestamp
+		os.makedir(dir_path)
+		PL = PanoramaPL(scale_facor = 1.0,mode = 'waymo')
 		PL.load_dataset('/home/ubuntu/waymo/training_0000/segment-10061305430875486848_1080_000_1100_000_with_camera_labels.tfrecord')
 		images,lidar,calib = PL.dataset.get(30)
 		sparse_vole = PL.fusion(images,calib[1],calib[0])
-		np.save('../experiments/data/waymo_test.npy',sparse_vole)
-		np.save('../experiments/data/waymo_lidar.npy',lidar)
+		np.save(os.path.join(dir_path,'waymo_test.npy'),sparse_vole)
+		np.save(os.path.join(dir_path,'waymo_lidar.npy'),lidar)
+		for idx,img in enumerate(images):
+			cv2.imwrite(os.path.join(dir_path,'%d.npy'%idx),img)
+
