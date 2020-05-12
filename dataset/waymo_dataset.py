@@ -29,6 +29,7 @@ class WaymoDataset():
         images = []
         for index, image in enumerate(frame.images):
             images.append(tf.image.decode_jpeg(image.image))
+            print(type(images[0]))
         return images
     
     def lidar(self,frame):
