@@ -55,7 +55,7 @@ class WaymoDataset():
         return Ks,Es
 
     def get(self,idx):
-        frame = self.load_tfrecord(self.filename,idx)
+        frame = self.load_tfrecord(idx)
         images = self.camera_image(frame)
         lidar = self.lidar(frame)
         param = self.calib(frame)

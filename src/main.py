@@ -59,7 +59,7 @@ class PanoramaPL():
 
 
 if __name__ == '__main__':
-	test = 'waymo'
+	test = 'Waymo'
 	if test == 'KITTI':
 		PL = PanoramaPL()
 		PL.load_dataset('/home/ubuntu/KITTI')
