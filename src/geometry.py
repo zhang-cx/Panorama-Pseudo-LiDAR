@@ -1,5 +1,24 @@
 import numpy as np
 
+def quaternion2rotation(quaternion):
+    w,x,y,z = quaternion
+    R = np.array([[1-2*(y**2+z**2),2*(x*y-z*w),2*(x*z+y*w)],
+                  [2*(x*y+z*w),1-2*(x**2+z**2),2*(y*z-x*w)],
+                  [2*(x*z-y*w),2*(y*z+x*w),1-2*(x**2+y**2)]])
+    return R
+
+def quaternion2euler(quaternion):
+    w = quaternion[0]
+    x = -quaternion[3]
+    y = quaternion[0]
+    z = -quaternion[1]
+
+    pitch =  -m.asin(2.0 * (x*z - w*y)) * 180.0 / m.pi
+    roll  =  m.atan2(2.0 * (w*x + y*z), w*w - x*x - y*y + z*z) * 180.0 / m.pi
+    yaw   =  m.atan2(2.0 * (w*z + x*y), w*w + x*x - y*y - z*z) * 180.0 / m.pi
+
+    return (pitch,roll,yaw)
+
 def channel_exchange(points):
     x,y,z = points[:,0].copy(),points[:,1].copy(),points[:,2].copy()
     return np.stack([z,x,y],axis=1)
