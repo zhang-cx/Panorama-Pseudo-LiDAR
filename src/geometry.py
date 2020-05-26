@@ -45,6 +45,17 @@ def E(extrinsic):
     extrinsic = [float(e) for e in extrinsic]
     return np.array(extrinsic).reshape((4,4))
 
+def depth_to_rect(depth):
+    """
+    :param disp: the disparity matrix of the image
+    :param scale_factor: the scale factor to recover the depth
+    """
+    H,W = depth.shape
+    x,y = np.meshgrid(range(W),range(H))
+    rect = np.stack([x,y,depth],axis=2)
+    rect = rect.reshape(-1,3).astype(np.float32)
+    return rect
+
 
 def disp_to_rect(disp,scale_factor):
     """
